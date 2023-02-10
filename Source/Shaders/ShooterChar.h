@@ -5,15 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Weapon.h"
+#include "AmmoType.h"
 #include "ShooterChar.generated.h"
 
-UENUM(BlueprintType)
-enum class EAmmoTypes:uint8
-{
-	EAT_9mm UMETA(DisplayName = "9mm"),
-	EAT_AR UMETA(DisplayName = "AssautRifle"),
-	EAT_MAX UMETA(DisplayName = "DefaultMax")
-};
 
 UENUM(BlueprintType)
 enum class ECombatState : uint8
@@ -79,6 +73,13 @@ protected:
 	void ReloadWeapon();
 	UFUNCTION(BlueprintCallable)
 	void FinishReloading();
+	bool CarryingAmmo();
+	UFUNCTION(BlueprintCallable)
+	void GrabClip();
+
+	UFUNCTION(BlueprintCallable)
+	void ReleaseClip();
+
 private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -208,6 +209,9 @@ private:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* ReloadMontage;
+	
+
+
 public:
 
 public:

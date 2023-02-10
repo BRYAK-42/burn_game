@@ -588,25 +588,69 @@ void AShooterChar::PlayGunFireMontage()
 
 void AShooterChar::ReloadButtonPressed()
 {
-	
 	ReloadWeapon();
 }
 
 void AShooterChar::ReloadWeapon()
 {
 	if (CombatState != ECombatState::ECS_Unoccupied) return;
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (EquippedWeapon == nullptr) return;
+	
 
-	if (AnimInstance && ReloadMontage)
+	if (CarryingAmmo())
 	{
-		
 		CombatState = ECombatState::ECS_Reloading;
-		AnimInstance->Montage_Play(ReloadMontage);
-		AnimInstance->Montage_JumpToSection(FName("ReloadSMG"), ReloadMontage);
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+		if (AnimInstance && ReloadMontage)
+		{	
+			AnimInstance->Montage_Play(ReloadMontage);
+			AnimInstance->Montage_JumpToSection(EquippedWeapon->GetReloadMontageSection());
+		}
 	}
 }
 
 void AShooterChar::FinishReloading()
 {
+	if (EquippedWeapon == nullptr) return;
 	CombatState = ECombatState::ECS_Unoccupied;
+	const auto AmmoType = EquippedWeapon->GetAmmoType();
+
+	if (AmmoMap.Contains(AmmoType))
+	{
+		//Current Ammo amount carried
+		int CarriedAmmo = AmmoMap[AmmoType];
+		const int MagEmptySpace = EquippedWeapon->GetMagazineCapacity() - EquippedWeapon->GetAmmo();
+		if (MagEmptySpace > CarriedAmmo)
+		{
+			EquippedWeapon->ReloadAmmo(CarriedAmmo);
+			CarriedAmmo = 0;
+		}
+		else
+		{
+			EquippedWeapon->ReloadAmmo(MagEmptySpace);
+			CarriedAmmo -= MagEmptySpace;
+		}
+		AmmoMap.Add(AmmoType, CarriedAmmo);
+	}
+}
+
+bool AShooterChar::CarryingAmmo()
+{
+	if (EquippedWeapon == nullptr) return false;
+	auto AmmoType = EquippedWeapon->GetAmmoType();
+	if (AmmoMap.Contains(AmmoType))
+	{
+		return AmmoMap[AmmoType] > 0;
+	}
+	return false;
+}
+
+void AShooterChar::GrabClip()
+{
+	if (EquippedWeapon == nullptr) return;
+
+}
+
+void AShooterChar::ReleaseClip()
+{
 }
