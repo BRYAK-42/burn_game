@@ -11,6 +11,7 @@ AWeapon::AWeapon()
 	AmmoType = EAmmoTypes::EAT_9mm;
 	ReloadMontageSection = FName(TEXT("ReloadSMG"));
 	bMovingClip = false;
+	ClipBoneName = TEXT("smg_clip");
 }
 
 void AWeapon::Tick(float DeltaTime)

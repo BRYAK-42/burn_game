@@ -209,9 +209,13 @@ private:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* ReloadMontage;
-	
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	FTransform ClipTransform;
 
+	//Scene component, attached to char hand
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	USceneComponent* HandSceneComponent;
 public:
 
 public:
@@ -228,5 +232,6 @@ public:
 	void IncrementOverlappedItemCount(int Amount);
 	void GetPickUpItem(AItem* Item);
 	FVector GetCameraInterpLocation();
+
 };
 

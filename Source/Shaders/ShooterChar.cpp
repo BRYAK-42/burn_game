@@ -82,6 +82,7 @@ AShooterChar::AShooterChar()
 	StartingAmmoutAR = 120;
 
 	CombatState = ECombatState::ECS_Unoccupied;
+	HandSceneComponent = CreateDefaultSubobject<USceneComponent>("Hand Scene Component");
 	
 }
 
@@ -449,6 +450,10 @@ void AShooterChar::IncrementOverlappedItemCount(int Amount)
 
 void AShooterChar::GetPickUpItem(AItem* Item)
 {
+	if (Item->GetEquipSound())
+	{
+		UGameplayStatics::PlaySound2D(this, Item->GetEquipSound());
+	}
 	auto Weapon = Cast<AWeapon>(Item);
 	if (Weapon)
 	{
@@ -505,6 +510,10 @@ void AShooterChar::InteractButtonPressed()
 	if (TraceHitItem)
 	{
 		TraceHitItem->StartItemCurve(this);
+		if (TraceHitItem->GetPickUpSound())
+		{
+			UGameplayStatics::PlaySound2D(this, TraceHitItem->GetPickUpSound());
+		}
 	}
 }
 
@@ -648,9 +657,19 @@ bool AShooterChar::CarryingAmmo()
 void AShooterChar::GrabClip()
 {
 	if (EquippedWeapon == nullptr) return;
+	if (HandSceneComponent == nullptr) return;
 
+	int ClipBoneIndex = EquippedWeapon->GetItemMesh()->GetBoneIndex(EquippedWeapon->GetClipBoneName());
+	ClipTransform = EquippedWeapon->GetItemMesh()->GetBoneTransform(ClipBoneIndex);
+
+	FAttachmentTransformRules AttachmentRules(EAttachmentRule::KeepRelative,true);
+	HandSceneComponent->AttachToComponent(GetMesh(), AttachmentRules, FName("hand_L"));
+	HandSceneComponent->SetWorldTransform(ClipTransform);
+	
+	EquippedWeapon->SetMovingClip(true);
 }
 
 void AShooterChar::ReleaseClip()
 {
+	EquippedWeapon->SetMovingClip(false);
 }

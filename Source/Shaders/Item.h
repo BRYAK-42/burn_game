@@ -103,6 +103,12 @@ private:
 		
 	float ItemInterpX;
 	float ItemInterpY;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
+	class USoundCue* PickUpSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
+	class USoundCue* EquipSound;
+
 public:
 	FORCEINLINE UWidgetComponent* GetPickUpWidget() const { return PickUpWidget; };
 	FORCEINLINE USphereComponent* GetAreaSphere() const { return MyAreaSphere; };
@@ -111,6 +117,7 @@ public:
 	void SetItemState(EItemState State);
 	FORCEINLINE USkeletalMeshComponent* GetItemMesh() { return ItemMesh; }
 	void StartItemCurve(AShooterChar* Char);
-
+	FORCEINLINE USoundCue* GetPickUpSound() const { return PickUpSound; };
+	FORCEINLINE USoundCue* GetEquipSound() const { return EquipSound; };
 
 };

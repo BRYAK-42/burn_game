@@ -212,6 +212,7 @@ void AItem::FinishInterping()
 	if (ShooterCharRef)
 	{
 		ShooterCharRef->GetPickUpItem(this);
+
 	}
 }
 

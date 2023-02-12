@@ -4,7 +4,18 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-
+UShooterAnimInsctance::UShooterAnimInsctance() 
+{
+	Speed = 0;
+	bIsInAir = false;
+	bIsAccelerating = false;
+	bAiming = false;
+	MovementOffsetYaw = 0;
+	LastMovementOffsetYaw = 0; 
+	CharacterYaw = 0;
+	CharacterYawLastFrame = 0;
+	RootYawOffset = 0;
+}
 
 void UShooterAnimInsctance::UpdateAnimationProperties(float DelatTime)
 {
@@ -34,9 +45,24 @@ void UShooterAnimInsctance::UpdateAnimationProperties(float DelatTime)
 		}
 		bAiming = ShooterCharacter->GetAimState();
 	}
+	TurnInPlace();
 }
 
 void UShooterAnimInsctance::NativeInitializeAnimation()
 {
 	ShooterCharacter = Cast<AShooterChar>(TryGetPawnOwner());
+}
+
+void UShooterAnimInsctance::TurnInPlace()
+{
+	if (ShooterCharacter == nullptr) return;
+	if (Speed < 0)
+	{
+		CharacterYawLastFrame = CharacterYaw;
+		CharacterYaw = ShooterCharacter->GetActorRotation().Yaw;
+		const float YawDelta = CharacterYaw - CharacterYawLastFrame;
+
+		RootYawOffset -= YawDelta;
+	}
+
 }
